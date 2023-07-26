@@ -3,30 +3,30 @@ package com.example.stationdesignproject
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract.Data
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
-import android.widget.Toast
+
 import androidx.appcompat.app.AlertDialog
 
 class CalculateActivity : AppCompatActivity() {
 
-    companion object{
-      const val LiterOrMoney ="literormoney"
+    companion object {
+        const val LiterOrMoney = "literormoney"
+        const val CAR = "car"
+        const val PUMP = "pump"
     }
 
-    lateinit var btnBuyFuel:Button
+    lateinit var btnBuyFuel: Button
     lateinit var spCars: Spinner
     lateinit var spPumps: Spinner
-    lateinit var rgLiterOrMoney:RadioGroup
-    lateinit var etLiterOrMoney:EditText
+    lateinit var rgLiterOrMoney: RadioGroup
+    lateinit var etLiterOrMoney: EditText
+    var selectedRadioButton: RadioButton? = null
+    var calculatedPrice:Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,61 +35,73 @@ class CalculateActivity : AppCompatActivity() {
         rgLiterOrMoney = findViewById(R.id.rgLiterOrMoney)
         etLiterOrMoney = findViewById(R.id.etLiterOrMoney)
         btnBuyFuel = findViewById(R.id.btnBuyFuel)
-        spCars =findViewById(R.id.spCar)
-        spPumps=findViewById(R.id.spPump)
+        spCars = findViewById(R.id.spCar)
+        spPumps = findViewById(R.id.spPump)
 
 
-        rgLiterOrMoney.setOnCheckedChangeListener { group, checkedId ->                                   //basılan radiobuttonu tutuyor. Full butona basılmadıysa enable
-            val selectedRadioButton: RadioButton = findViewById(checkedId)
-            etLiterOrMoney.isEnabled = selectedRadioButton.id != R.id.rdbtnFull
-        }
-
+        /*        rgLiterOrMoney.setOnCheckedChangeListener { group, checkedId ->                                   //basılan radiobuttonu tutuyor. Full butona basılmadıysa enable
+                    selectedRadioButton = findViewById(checkedId)
+                    selectedRadioButton?.let {
+                        etLiterOrMoney.isEnabled = it.id != R.id.rdbtnFull
+                    } ?: kotlin.run {
+                        showAlert("Warning","Please Choose a Option")
+                    }
+                }
+        */
 
         val carNames = Database.cars.map { it.getListName() }                                             //cars listesini spinner'a basma
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, carNames)
-        spCars.adapter = adapter
+        spCars.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, carNames)
+
+        val pumpNames = Database.pumps.map { it.no }                                                    //pump listesini spinner'a basma
+        spPumps.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, pumpNames)
 
 
-/*
-        spCars.onItemSelectedListener = object :OnItemSelectedListener{
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val items = Database.cars
-                val selected = items.get(position)
+        btnBuyFuel.setOnClickListener {
+            if (!etLiterOrMoney.text.isNullOrEmpty()) {
 
-            }
+                val enterAmount = etLiterOrMoney.text.toString().toDouble()
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                println("lutfen secim yap....")
-            }
-
-        }
-*/
-
-        val pumpNames = Database.pumps.map { it.name }                                                           //pump listesini spinner'a basma
-        val adapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, pumpNames)
-        spPumps.adapter = adapter2
+                val selectedCarSpinner = Database.cars[spCars.selectedItemPosition]
+                val selectedPumpSpinner = Database.pumps[spPumps.selectedItemPosition]
 
 
-        btnBuyFuel.setOnClickListener{
+                if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnLtr) {
+                    if (selectedCarSpinner.capacity > (enterAmount + selectedCarSpinner.currentFuelAmount)) {
+                        val liter = enterAmount
+                        calculatedPrice  = (enterAmount * selectedCarSpinner.fuelType.price)
+                    } else {
+                        showAlert("Fazla Yakıt", "Depo kapasitesi aşıldı.")
+                    }
 
-            if(!etLiterOrMoney.text.isNullOrEmpty()){
+                } else if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnMoney) {
+                    if (enterAmount / selectedCarSpinner.fuelType.price < selectedCarSpinner.capacity - selectedCarSpinner.currentFuelAmount) {
+                        val liter = enterAmount / selectedCarSpinner.fuelType.price
+                        calculatedPrice = enterAmount
+                    } else {
+                        showAlert("Fazla Para", "Deponuz o kadar almaz")
+                    }
+                } else if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnFull) {
+                    val liter = (selectedCarSpinner.capacity - selectedCarSpinner.currentFuelAmount)
+                    calculatedPrice= (liter * selectedCarSpinner.fuelType.price)
+                } else {
+                    showAlert("Uyarı", "Lütfen Bir Seçenek Belirleyin")
+                }
 
-                val intent = Intent(this,PrintActivity::class.java)
-                intent.putExtra(LiterOrMoney, etLiterOrMoney.text.toString().toDouble())
+                val intent = Intent(this, PrintActivity::class.java)
+                intent.putExtra(CAR, selectedCarSpinner)
+                intent.putExtra(PUMP, selectedPumpSpinner)
+                intent.putExtra(LiterOrMoney, calculatedPrice)
                 startActivity(intent)
-            }else{
-                AlertDialog.Builder(this)
-                    .setTitle("WARNING")
-                    .setMessage("PLEASE ENTER A AMOUNT")
-                    .setCancelable(false)
-                    .setPositiveButton("OKEY") { dialog, which ->}
-                    .create().show()
+
+            } else {
+                showAlert("Warnings", "Please Enter a Amount")
             }
         }
+    }
+
+    private fun showAlert(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message).create().show()
     }
 }
