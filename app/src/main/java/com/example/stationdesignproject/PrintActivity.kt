@@ -17,14 +17,15 @@ class PrintActivity : AppCompatActivity() {
         etPumpInformation = findViewById(R.id.etPumpInformation)
         etTotalPrice = findViewById(R.id.etTotalPrice)
 
-        val car= intent.getParcelableExtra<Car>(CalculateActivity.CAR)
         val pump= intent.getParcelableExtra<Pump>(CalculateActivity.PUMP)
+        val invoice = intent.getParcelableExtra<Invoice>(CalculateActivity.INVOICE)
 
-        car?.let {
-            etCarInformation.setText(it.getListName())
+        invoice?.let {
+            etCarInformation.setText(it.car.getListName())
+            etTotalPrice.setText("price: ${it.price} liter: ${it.liter}")
         }
         pump?.let {
-            etPumpInformation.setText(it.no)
+            etPumpInformation.setText("${it.no} Nolu pompa - Pompacı: ${it.employee.name}")
         }
     }
 }

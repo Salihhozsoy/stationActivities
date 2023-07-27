@@ -31,19 +31,19 @@
             android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Litre" />
+            android:text="Liter" />
 
         <RadioButton
             android:id="@+id/rdbtnMoney"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Para" />
+            android:text="Money" />
 
         <RadioButton
             android:id="@+id/rdbtnFull"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fulle" />
+            android:text="Full" />
 
     </RadioGroup>
 
@@ -52,9 +52,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
-        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:background="@drawable/edittext_background"
-        android:hint="Litre yada Para"
+        android:hint="Enter Liter or Money"
         android:inputType="numberDecimal"
         android:padding="10dp" />
 

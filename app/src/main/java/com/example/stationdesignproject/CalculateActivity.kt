@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 
@@ -15,9 +14,8 @@ import androidx.appcompat.app.AlertDialog
 class CalculateActivity : AppCompatActivity() {
 
     companion object {
-        const val LiterOrMoney = "literormoney"
-        const val CAR = "car"
         const val PUMP = "pump"
+        const val INVOICE = "invoice"
     }
 
     lateinit var btnBuyFuel: Button
@@ -25,8 +23,10 @@ class CalculateActivity : AppCompatActivity() {
     lateinit var spPumps: Spinner
     lateinit var rgLiterOrMoney: RadioGroup
     lateinit var etLiterOrMoney: EditText
-    var selectedRadioButton: RadioButton? = null
-    var calculatedPrice:Double? = null
+
+    //   var selectedRadioButton: RadioButton? = null
+    var calculatedPrice: Double? = null
+    var calculatedLiter: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,30 +67,31 @@ class CalculateActivity : AppCompatActivity() {
 
                 if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnLtr) {
                     if (selectedCarSpinner.capacity > (enterAmount + selectedCarSpinner.currentFuelAmount)) {
-                        val liter = enterAmount
-                        calculatedPrice  = (enterAmount * selectedCarSpinner.fuelType.price)
+                        calculatedLiter = enterAmount
+                        calculatedPrice = (enterAmount * selectedCarSpinner.fuelType.price)
                     } else {
                         showAlert("Fazla Yakıt", "Depo kapasitesi aşıldı.")
                     }
 
                 } else if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnMoney) {
                     if (enterAmount / selectedCarSpinner.fuelType.price < selectedCarSpinner.capacity - selectedCarSpinner.currentFuelAmount) {
-                        val liter = enterAmount / selectedCarSpinner.fuelType.price
+                        calculatedLiter = enterAmount / selectedCarSpinner.fuelType.price
                         calculatedPrice = enterAmount
                     } else {
                         showAlert("Fazla Para", "Deponuz o kadar almaz")
                     }
                 } else if (rgLiterOrMoney.checkedRadioButtonId == R.id.rdbtnFull) {
                     val liter = (selectedCarSpinner.capacity - selectedCarSpinner.currentFuelAmount)
-                    calculatedPrice= (liter * selectedCarSpinner.fuelType.price)
+                    calculatedPrice = (liter * selectedCarSpinner.fuelType.price)
+                    calculatedLiter = liter
                 } else {
                     showAlert("Uyarı", "Lütfen Bir Seçenek Belirleyin")
                 }
 
                 val intent = Intent(this, PrintActivity::class.java)
-                intent.putExtra(CAR, selectedCarSpinner)
+
+                intent.putExtra(INVOICE, Invoice(2, calculatedPrice!!, calculatedLiter!!, selectedCarSpinner, Database.employee1))
                 intent.putExtra(PUMP, selectedPumpSpinner)
-                intent.putExtra(LiterOrMoney, calculatedPrice)
                 startActivity(intent)
 
             } else {

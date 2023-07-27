@@ -25,7 +25,6 @@ object Database {
         Pump(6, 6, listOf(FuelType.Electric), employee4),
     )
 
-    val invoices = mutableListOf<Invoice>()
 }
 @Parcelize
 data class Car(val id: Int, val name: String, val plateNo: String,val fuelType: FuelType , var currentFuelAmount:Double,val capacity:Double) :
@@ -38,8 +37,9 @@ data class Employee(val id:Int, val name: String) : Parcelable
 @Parcelize
 data class Pump(val id: Int, val no:Int,val fuelTypes:List<FuelType>,val employee: Employee) :
     Parcelable
-
-data class Invoice(val id: Int,val price:Double, val car: Car, val employee: Employee) {}
+@Parcelize
+data class Invoice(val id: Int,val price:Double,val liter:Double, val car: Car, val employee: Employee) :
+    Parcelable {}
 
 enum class FuelType(val price:Double) {
     Gasoline(36.0),
