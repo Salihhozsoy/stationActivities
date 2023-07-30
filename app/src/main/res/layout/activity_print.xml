@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PrintActivity"
-    android:background="@color/material_dynamic_primary60">
+    android:background="@drawable/stationbackground">
 
 
     <LinearLayout
@@ -20,8 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="45dp"
             android:text="INVOICE"
+            android:textSize="30dp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:layout_gravity="center"/>
 
         <TextView
@@ -29,12 +30,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="45dp"
             android:text="Car Information"
+            android:textSize="20dp"
             android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/etCarInformation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/edittext_background"
             android:drawableLeft="@drawable/car"
@@ -45,12 +47,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Pump Information"
+            android:textSize="20dp"
             android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/etPumpInformation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/edittext_background"
             android:drawableLeft="@drawable/pump"
@@ -60,12 +63,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Total Price"
+            android:textSize="20dp"
             android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/etTotalPrice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/edittext_background"
             android:drawableLeft="@drawable/price"
